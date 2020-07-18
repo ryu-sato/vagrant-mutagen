@@ -137,6 +137,7 @@ module VagrantPlugins
         end
       end
 
+      # Define methods to controll mutagen
       DISCARD_STDOUT = Vagrant::Util::Platform.windows? ? '>nul'  : '>/dev/null'
       DISCARD_STDERR = Vagrant::Util::Platform.windows? ? '2>nul' : '2>/dev/null'
       MUTAGEN_METHODS = {
