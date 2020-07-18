@@ -37,30 +37,35 @@ module VagrantPlugins
 
       def addToSSHConfig(content)
         return if content.length == 0
+        unless File.writable_real?(ssh_user_config_path)
+          @ui.info "[vagrant-mutagen-utilize] This operation requires administrative access. You may " +
+                     "skip it by manually adding equivalent entries to the config file."
+          return
+        end
 
         @ui.info "[vagrant-mutagen-utilize] Writing the following config to (#ssh_user_config_path)"
         @ui.info content
-        if !File.writable_real?(ssh_user_config_path)
-          @ui.info "[vagrant-mutagen-utilize] This operation requires administrative access. You may " +
-                       "skip it by manually adding equivalent entries to the config file."
-          if !sudo(%Q(sh -c 'echo "#{content}" >> #ssh_user_config_path'))
-            @ui.error "[vagrant-mutagen-utilize] Failed to add config, could not use sudo"
+        addLineFeedToFileEndIfNotExist(ssh_user_config_path)
+        hostsFile = File.open(ssh_user_config_path, "a") do |f|
+          f.write(content)
+        end
+      end
+
+      def addLineFeedToFileEndIfNotExist(path)
+        # Set "true" as default because when it doesn't know if file is ending with line feed or not, it should not add the line feed.
+        is_file_end_with_line_feed = true
+        File.open(path, "a+") do |f|
+          if f.seek(-1, IO::SEEK_END) == 0
+            c = f.getc
+            if c != "\r" && c != "\n"
+              is_file_end_with_line_feed = false
+            end
           end
-        elsif Vagrant::Util::Platform.windows?
-          require 'tmpdir'
-          uuid = @machine.id || @machine.config.mutagen_utilize.id
-          tmpPath = File.join(Dir.tmpdir, 'hosts-' + uuid + '.cmd')
-          File.open(tmpPath, "w") do |tmpFile|
-            cmd_content = content.lines.map {|line| ">>\"#{ssh_user_config_path}\" echo #{line}" }.join
-            tmpFile.puts(cmd_content)
-          end
-          sudo(tmpPath, true)
-          File.delete(tmpPath)
-        else
-          content = "\n" + content + "\n"
-          hostsFile = File.open(ssh_user_config_path, "a")
-          hostsFile.write(content)
-          hostsFile.close()
+        end
+        return if is_file_end_with_line_feed
+
+        File.open(path, "a") do |f|
+          f.puts("")
         end
       end
 
@@ -85,11 +90,12 @@ module VagrantPlugins
       end
 
       def removeConfigEntries
-        @ui.info "[vagrant-mutagen-utilize] Removing SSH config entry"
         if !@machine.id and !@machine.config.mutagen_utilize.id
           @ui.info "[vagrant-mutagen-utilize] No machine id, nothing removed from #ssh_user_config_path"
           return
         end
+
+        @ui.info "[vagrant-mutagen-utilize] Removing SSH config entry"
         configContents = File.read(ssh_user_config_path)
         uuid = @machine.id || @machine.config.mutagen_utilize.id
         hashedId = Digest::MD5.hexdigest(uuid)
@@ -98,55 +104,26 @@ module VagrantPlugins
         end
       end
 
-      def removeFromConfig(options = {})
+      def removeFromConfig
+        unless File.writable_real?(ssh_user_config_path)
+          @ui.info "[vagrant-mutagen-utilize] This operation requires administrative access. You may " +
+                    "skip it by manually adding equivalent entries to the config file."
+          return
+        end
+
         uuid = @machine.id || @machine.config.mutagen_utilize.id
         hashedId = Digest::MD5.hexdigest(uuid)
-        if !File.writable_real?(ssh_user_config_path) || Vagrant::Util::Platform.windows?
-          if !sudo(%Q(sed -i -e '/# VAGRANT: #{hashedId}/,/# VAGRANT: #{hashedId}/d' #ssh_user_config_path))
-            @ui.error "[vagrant-mutagen-utilize] Failed to remove config, could not use sudo"
-          end
-        else
-          hosts = ""
-          pair_started = false
-          pair_ended = false
-          File.open(ssh_user_config_path).each do |line|
-            # Reset
-            if pair_started == true && pair_ended == true
-              pair_started = pair_ended = false
-            end
-            if line.match(/#{hashedId}/)
-              if pair_started == true
-                pair_ended = true
-              end
-              pair_started = true
-            end
-            hosts << line unless pair_started
-          end
-          hosts.strip!
-          hostsFile = File.open(ssh_user_config_path, "w")
-          hostsFile.write(hosts)
-          hostsFile.close()
+
+        content = File.read(ssh_user_config_path)
+        new_content = content.gsub(/^(# VAGRANT: #{hashedId}).*?(^# VAGRANT: #{hashedId}).*$/m, '')
+        File.open(ssh_user_config_path, "w") do |f|
+          f.puts(new_content)
         end
       end
 
       def signature(name, uuid = self.uuid)
         hashedId = Digest::MD5.hexdigest(uuid)
         %Q(# VAGRANT: #{hashedId} (#{name}) / #{uuid})
-      end
-
-      def sudo(command, wait = false)
-        return if !command
-        if Vagrant::Util::Platform.windows?
-          require 'win32ole'
-          args = command.split(" ")
-          command = args.shift
-          sh = WIN32OLE.new('Shell.Application')
-          sh.ShellExecute(command, args.join(" "), '', 'runas', 0)
-          sleep 3 if wait # Wait a while because ShellExecute does not wait for the command to exit.
-          return true
-        else
-          return system("sudo #{command}")
-        end
       end
 
       def plugin_orchestrate?
