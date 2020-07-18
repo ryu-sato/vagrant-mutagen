@@ -49,7 +49,7 @@ module VagrantPlugins
           end
         elsif Vagrant::Util::Platform.windows?
           require 'tmpdir'
-          uuid = @machine.id || @machine.config.mutagen.id
+          uuid = @machine.id || @machine.config.mutagen_utilize.id
           tmpPath = File.join(Dir.tmpdir, 'hosts-' + uuid + '.cmd')
           File.open(tmpPath, "w") do |tmpFile|
             cmd_content = content.lines.map {|line| ">>\"#{@@ssh_user_config_path}\" echo #{line}" }.join
@@ -82,16 +82,16 @@ module VagrantPlugins
       end
 
       def cacheConfigEntries
-        @machine.config.mutagen.id = @machine.id
+        @machine.config.mutagen_utilize.id = @machine.id
       end
 
       def removeConfigEntries
-        if !@machine.id and !@machine.config.mutagen.id
+        if !@machine.id and !@machine.config.mutagen_utilize.id
           @ui.info "[vagrant-mutagen-utilize] No machine id, nothing removed from #@@ssh_user_config_path"
           return
         end
         configContents = File.read(@@ssh_user_config_path)
-        uuid = @machine.id || @machine.config.mutagen.id
+        uuid = @machine.id || @machine.config.mutagen_utilize.id
         hashedId = Digest::MD5.hexdigest(uuid)
         if configContents.match(/#{hashedId}/)
           removeFromConfig
@@ -99,7 +99,7 @@ module VagrantPlugins
       end
 
       def removeFromConfig(options = {})
-        uuid = @machine.id || @machine.config.mutagen.id
+        uuid = @machine.id || @machine.config.mutagen_utilize.id
         hashedId = Digest::MD5.hexdigest(uuid)
         if !File.writable_real?(@@ssh_user_config_path) || Vagrant::Util::Platform.windows?
           if !sudo(%Q(sed -i -e '/# VAGRANT: #{hashedId}/,/# VAGRANT: #{hashedId}/d' #@@ssh_user_config_path))
