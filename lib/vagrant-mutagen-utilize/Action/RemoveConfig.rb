@@ -2,8 +2,6 @@ module VagrantPlugins
   module Mutagen
     module Action
       class RemoveConfig
-        include Mutagen
-
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
@@ -11,10 +9,10 @@ module VagrantPlugins
         end
 
         def call(env)
-          return unless plugin_orchestrate?(env)
+          m = Mutagen.new(@machine, @ui)
+          return unless m.plugin_orchestrate?
 
-          @ui.info "[vagrant-mutagen-utilize] Removing SSH config entry"
-          removeConfigEntries
+          m.removeConfigEntries
           @app.call(env)
         end
 

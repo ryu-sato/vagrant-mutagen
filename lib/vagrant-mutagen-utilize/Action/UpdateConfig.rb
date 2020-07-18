@@ -1,11 +1,9 @@
 require_relative "../Mutagen"
+
 module VagrantPlugins
   module Mutagen
     module Action
       class UpdateConfig
-        include Mutagen
-
-
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
@@ -13,10 +11,10 @@ module VagrantPlugins
         end
 
         def call(env)
-          return unless plugin_orchestrate?(env)
+          m = Mutagen.new(@machine, @ui)
+          return unless m.plugin_orchestrate?
 
-          @ui.info "[vagrant-mutagen-utilize] Checking for SSH config entries"
-          addConfigEntries()
+          m.addConfigEntries
           @app.call(env)
         end
 

@@ -3,9 +3,6 @@ module VagrantPlugins
   module Mutagen
     module Action
       class TerminateOrchestration
-        include Mutagen
-
-
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
@@ -13,9 +10,10 @@ module VagrantPlugins
         end
 
         def call(env)
-          return unless plugin_orchestrate?(env)
+          m = Mutagen.new(@machine, @ui)
+          return unless m.plugin_orchestrate?
 
-          terminateOrchestration
+          m.terminateOrchestration
           @app.call(env)
         end
 

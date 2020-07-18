@@ -1,17 +1,16 @@
 module VagrantPlugins
   module Mutagen
-    module Mutagen
+    class Mutagen
       DISCARD_STDOUT = Vagrant::Util::Platform.windows? ? '>nul'  : '>/dev/null'
       DISCARD_STDERR = Vagrant::Util::Platform.windows? ? '2>nul' : '2>/dev/null'
 
-      if ENV['VAGRANT_MUTAGEN_SSH_CONFIG_PATH']
-        @@ssh_user_config_path = ENV['VAGRANT_MUTAGEN_SSH_CONFIG_PATH']
-      else
-        @@ssh_user_config_path = '~/.ssh/config'
+      def initialize(machine, ui)
+        @machine = machine
+        @ui = ui
       end
-      @@ssh_user_config_path = File.expand_path(@@ssh_user_config_path)
 
       def addConfigEntries
+        @ui.info "[vagrant-mutagen-utilize] Checking for SSH config entries"
         # Prepare some needed variables
         uuid = @machine.id
         name = @machine.name
@@ -20,7 +19,7 @@ module VagrantPlugins
         newconfig = ''
 
         # Read contents of SSH config file
-        configContents = File.read(@@ssh_user_config_path)
+        configContents = File.read(ssh_user_config_path)
         # Check for existing entry for hostname in config
         entryPattern = configEntryPattern(hostname, name, uuid)
         if configContents.match(/#{entryPattern}/)
@@ -39,12 +38,12 @@ module VagrantPlugins
       def addToSSHConfig(content)
         return if content.length == 0
 
-        @ui.info "[vagrant-mutagen-utilize] Writing the following config to (#@@ssh_user_config_path)"
+        @ui.info "[vagrant-mutagen-utilize] Writing the following config to (#ssh_user_config_path)"
         @ui.info content
-        if !File.writable_real?(@@ssh_user_config_path)
+        if !File.writable_real?(ssh_user_config_path)
           @ui.info "[vagrant-mutagen-utilize] This operation requires administrative access. You may " +
                        "skip it by manually adding equivalent entries to the config file."
-          if !sudo(%Q(sh -c 'echo "#{content}" >> #@@ssh_user_config_path'))
+          if !sudo(%Q(sh -c 'echo "#{content}" >> #ssh_user_config_path'))
             @ui.error "[vagrant-mutagen-utilize] Failed to add config, could not use sudo"
           end
         elsif Vagrant::Util::Platform.windows?
@@ -52,14 +51,14 @@ module VagrantPlugins
           uuid = @machine.id || @machine.config.mutagen_utilize.id
           tmpPath = File.join(Dir.tmpdir, 'hosts-' + uuid + '.cmd')
           File.open(tmpPath, "w") do |tmpFile|
-            cmd_content = content.lines.map {|line| ">>\"#{@@ssh_user_config_path}\" echo #{line}" }.join
+            cmd_content = content.lines.map {|line| ">>\"#{ssh_user_config_path}\" echo #{line}" }.join
             tmpFile.puts(cmd_content)
           end
           sudo(tmpPath, true)
           File.delete(tmpPath)
         else
           content = "\n" + content + "\n"
-          hostsFile = File.open(@@ssh_user_config_path, "a")
+          hostsFile = File.open(ssh_user_config_path, "a")
           hostsFile.write(content)
           hostsFile.close()
         end
@@ -86,11 +85,12 @@ module VagrantPlugins
       end
 
       def removeConfigEntries
+        @ui.info "[vagrant-mutagen-utilize] Removing SSH config entry"
         if !@machine.id and !@machine.config.mutagen_utilize.id
-          @ui.info "[vagrant-mutagen-utilize] No machine id, nothing removed from #@@ssh_user_config_path"
+          @ui.info "[vagrant-mutagen-utilize] No machine id, nothing removed from #ssh_user_config_path"
           return
         end
-        configContents = File.read(@@ssh_user_config_path)
+        configContents = File.read(ssh_user_config_path)
         uuid = @machine.id || @machine.config.mutagen_utilize.id
         hashedId = Digest::MD5.hexdigest(uuid)
         if configContents.match(/#{hashedId}/)
@@ -101,15 +101,15 @@ module VagrantPlugins
       def removeFromConfig(options = {})
         uuid = @machine.id || @machine.config.mutagen_utilize.id
         hashedId = Digest::MD5.hexdigest(uuid)
-        if !File.writable_real?(@@ssh_user_config_path) || Vagrant::Util::Platform.windows?
-          if !sudo(%Q(sed -i -e '/# VAGRANT: #{hashedId}/,/# VAGRANT: #{hashedId}/d' #@@ssh_user_config_path))
+        if !File.writable_real?(ssh_user_config_path) || Vagrant::Util::Platform.windows?
+          if !sudo(%Q(sed -i -e '/# VAGRANT: #{hashedId}/,/# VAGRANT: #{hashedId}/d' #ssh_user_config_path))
             @ui.error "[vagrant-mutagen-utilize] Failed to remove config, could not use sudo"
           end
         else
           hosts = ""
           pair_started = false
           pair_ended = false
-          File.open(@@ssh_user_config_path).each do |line|
+          File.open(ssh_user_config_path).each do |line|
             # Reset
             if pair_started == true && pair_ended == true
               pair_started = pair_ended = false
@@ -123,7 +123,7 @@ module VagrantPlugins
             hosts << line unless pair_started
           end
           hosts.strip!
-          hostsFile = File.open(@@ssh_user_config_path, "w")
+          hostsFile = File.open(ssh_user_config_path, "w")
           hostsFile.write(hosts)
           hostsFile.close()
         end
@@ -149,8 +149,12 @@ module VagrantPlugins
         end
       end
 
-      def plugin_orchestrate?(env)
-        env[:machine].config.mutagen_utilize.orchestrate == true
+      def plugin_orchestrate?
+        @machine.config.mutagen_utilize.orchestrate == true
+      end
+
+      def ssh_user_config_path
+        @machine.config.mutagen_utilize.ssh_user_config_path
       end
 
       def startOrchestration()
