@@ -18,6 +18,10 @@ module VagrantPlugins
         @orchestrate = false if @orchestrate == UNSET_VALUE
         @ssh_user_config_path = File.expand_path('~/.ssh/config') if @ssh_user_config_path == UNSET_VALUE
       end
+
+      def orchestrate?
+        @orchestrate
+      end
     end
   end
 end

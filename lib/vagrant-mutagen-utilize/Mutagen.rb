@@ -118,10 +118,6 @@ module VagrantPlugins
         %(# VAGRANT: #{hashedId} (#{name}) / #{uuid})
       end
 
-      def plugin_orchestrate?
-        @machine.config.mutagen_utilize.orchestrate == true
-      end
-
       def ssh_user_config_path
         @machine.config.mutagen_utilize.ssh_user_config_path
       end
