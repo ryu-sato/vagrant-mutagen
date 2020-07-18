@@ -142,11 +142,11 @@ module Vagrant
         DISCARD_STDOUT = Vagrant::Util::Platform.windows? ? '>nul'  : '>/dev/null'
         DISCARD_STDERR = Vagrant::Util::Platform.windows? ? '2>nul' : '2>/dev/null'
         MUTAGEN_METHODS = {
-          "mutagen_project_started?":  "mutagen project list #{DISCARD_STDOUT} #{DISCARD_STDERR}", # mutagen project list returns 1 on error when no project is started
-          "start_mutagen_project":     "mutagen project start",
-          "terminate_mutagen_project": "mutagen project terminate",
-          "list_mutagen_project":      "mutagen project list"
-        }
+          "mutagen_project_started?": "mutagen project list #{DISCARD_STDOUT} #{DISCARD_STDERR}", # mutagen project list returns 1 on error when no project is started
+          "start_mutagen_project": 'mutagen project start',
+          "terminate_mutagen_project": 'mutagen project terminate',
+          "list_mutagen_project": 'mutagen project list'
+        }.freeze
         MUTAGEN_METHODS.each_pair do |method_name, command|
           define_method method_name do
             system(command)
