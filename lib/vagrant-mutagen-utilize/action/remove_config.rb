@@ -1,3 +1,5 @@
+require_relative '../mutagen'
+
 module VagrantPlugins
   module Mutagen
     module Action
