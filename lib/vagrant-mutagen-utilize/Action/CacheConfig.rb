@@ -15,7 +15,6 @@ module VagrantPlugins
           m.cacheConfigEntries
           @app.call(env)
         end
-
       end
     end
   end

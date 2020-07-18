@@ -1,4 +1,4 @@
-require_relative "../Mutagen"
+require_relative '../Mutagen'
 module VagrantPlugins
   module Mutagen
     module Action
@@ -13,10 +13,9 @@ module VagrantPlugins
           m = Mutagen.new(@machine, @ui)
           return unless m.plugin_orchestrate?
 
-          m.terminateOrchestration
+          m.terminate_orchestration
           @app.call(env)
         end
-
       end
     end
   end

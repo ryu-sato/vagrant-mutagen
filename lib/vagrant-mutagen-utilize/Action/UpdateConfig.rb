@@ -1,4 +1,4 @@
-require_relative "../Mutagen"
+require_relative '../Mutagen'
 
 module VagrantPlugins
   module Mutagen
@@ -14,10 +14,9 @@ module VagrantPlugins
           m = Mutagen.new(@machine, @ui)
           return unless m.plugin_orchestrate?
 
-          m.addConfigEntries
+          m.append_ssh_config_entry
           @app.call(env)
         end
-
       end
     end
   end

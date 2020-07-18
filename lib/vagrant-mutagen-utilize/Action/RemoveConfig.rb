@@ -12,10 +12,9 @@ module VagrantPlugins
           m = Mutagen.new(@machine, @ui)
           return unless m.plugin_orchestrate?
 
-          m.removeConfigEntries
+          m.remove_ssh_config_entry
           @app.call(env)
         end
-
       end
     end
   end
