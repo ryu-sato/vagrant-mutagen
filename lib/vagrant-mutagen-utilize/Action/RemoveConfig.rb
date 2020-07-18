@@ -11,17 +11,8 @@ module VagrantPlugins
         end
 
         def call(env)
-          machine_action = env[:machine_action]
-          if machine_action != :destroy || !@machine.id
-            if machine_action != :suspend
-              if machine_action != :halt
-                if mutagen_enabled
-                  @ui.info "[vagrant-mutagen-utilize] Removing SSH config entry"
-                  removeConfigEntries
-                end
-              end
-            end
-          end
+          @ui.info "[vagrant-mutagen-utilize] Removing SSH config entry"
+          removeConfigEntries
           @app.call(env)
         end
 
