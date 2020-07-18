@@ -47,10 +47,6 @@ module VagrantPlugins
         terminate_mutagen_project || logging(:error, 'Failed to terminate mutagen project (see error above)')
       end
 
-      def cache_config_entry
-        @machine.config.mutagen_utilize.id = @machine.id
-      end
-
       private
 
       def logging(level, message, with_prefix = true)
