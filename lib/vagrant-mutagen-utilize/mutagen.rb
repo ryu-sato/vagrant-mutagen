@@ -21,11 +21,8 @@ module VagrantPlugins
         append_to_ssh_config(ssh_config_entry)
       end
 
+      # Remove ssh config entry
       def remove_ssh_config_entry
-        if !@machine.id && !@machine.config.mutagen_utilize.id
-          logging(:info, "No machine id, nothing removed from #{ssh_user_config_path}")
-          return
-        end
         return unless ssh_config_entry_exist?
 
         logging(:info, 'Removing SSH config entry')
@@ -59,20 +56,26 @@ module VagrantPlugins
       end
 
       # Create a regular expression that will match the vagrant-mutagen-utilize signature
-      def ssh_config_entry_pattern(hostname, _name, uuid = self.uuid)
-        hashedId = Digest::MD5.hexdigest(uuid)
-        Regexp.new("^# VAGRANT: #{hashedId}.*$\nHost #{hostname}.*$")
+      def ssh_config_entry_pattern
+        hostname = @machine.config.vm.hostname
+
+        Regexp.new("^(#{segnature}).*$\nHost #{hostname}.*$")
       end
 
-      def signature(name, uuid = self.uuid)
+      def ssh_config_removing_pattern
+        Regexp.new("^(#{segnature}).*?(^#{segnature}).*$", Regexp::MULTILINE)
+      end
+
+      def signature
+        name = @machine.name
+        uuid = @machine.id
         hashedId = Digest::MD5.hexdigest(uuid)
+
         %(# VAGRANT: #{hashedId} (#{name}) / #{uuid})
       end
 
       def ssh_config_entry
         hostname = @machine.config.vm.hostname
-        name = @machine.name
-        uuid = @machine.id || self.uuid
 
         # Get the SSH config from Vagrant
         sshconfig = `vagrant ssh-config --host #{hostname}`
@@ -80,16 +83,12 @@ module VagrantPlugins
         sshconfig = sshconfig.gsub(/^$\n/, '')
         sshconfig = sshconfig.chomp
 
-        %(#{signature(name, uuid)}\n#{sshconfig}\n#{signature(name, uuid)})
+        %(#{signature}\n#{sshconfig}\n#{signature})
       end
 
       def ssh_config_entry_exist?
-        hostname = @machine.config.vm.hostname
-        name = @machine.name
-        uuid = @machine.id
-
         content = File.read(ssh_user_config_path)
-        entry_pattern = ssh_config_entry_pattern(hostname, name, uuid)
+        entry_pattern = ssh_config_entry_pattern
 
         content.match(/#{entry_pattern}/)
       end
@@ -118,11 +117,8 @@ module VagrantPlugins
           return
         end
 
-        uuid = @machine.id || @machine.config.mutagen_utilize.id
-        hashedId = Digest::MD5.hexdigest(uuid)
-
         content = File.read(ssh_user_config_path)
-        new_content = content.gsub(/^(# VAGRANT: #{hashedId}).*?(^# VAGRANT: #{hashedId}).*$/m, '')
+        new_content = content.gsub(ssh_config_removing_pattern, '')
         File.open(ssh_user_config_path, 'w') do |f|
           f.puts(new_content)
         end
