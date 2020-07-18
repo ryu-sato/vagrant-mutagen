@@ -39,24 +39,18 @@ module VagrantPlugins
       end
 
       action_hook(:mutagen_utilize, :machine_action_destroy) do |hook|
-        hook.prepend(Action::CacheConfig)
-      end
-
-      action_hook(:mutagen_utilize, :machine_action_destroy) do |hook|
-        hook.append(Action::TerminateOrchestration)
-        hook.append(Action::RemoveConfig)
+        hook.prepend(Action::RemoveConfig)
+        hook.prepend(Action::TerminateOrchestration)
       end
 
       action_hook(:mutagen_utilize, :machine_action_reload) do |hook|
         hook.append(Action::TerminateOrchestration)
-        hook.prepend(Action::RemoveConfig)
         hook.append(Action::UpdateConfig)
         hook.append(Action::StartOrchestration)
       end
 
       action_hook(:mutagen_utilize, :machine_action_resume) do |hook|
         hook.append(Action::TerminateOrchestration)
-        hook.prepend(Action::RemoveConfig)
         hook.append(Action::UpdateConfig)
         hook.append(Action::StartOrchestration)
       end

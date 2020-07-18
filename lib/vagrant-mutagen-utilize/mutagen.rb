@@ -6,7 +6,9 @@ module VagrantPlugins
         @ui = ui
       end
 
-      def append_ssh_config_entry
+      # Update ssh config entry
+      # If ssh config entry already exists, just entry appended
+      def update_ssh_config_entry
         hostname = @machine.config.vm.hostname
 
         logging(:info, 'Checking for SSH config entries')

@@ -15,7 +15,7 @@ module VagrantPlugins
           return unless @config.orchestrate?
 
           m = Mutagen.new(@machine, @ui)
-          m.append_ssh_config_entry
+          m.update_ssh_config_entry
           @app.call(env)
         end
       end
