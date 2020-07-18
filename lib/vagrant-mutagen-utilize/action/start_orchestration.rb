@@ -1,8 +1,9 @@
-require_relative '../Mutagen'
+require_relative '../mutagen'
+
 module VagrantPlugins
   module Mutagen
     module Action
-      class TerminateOrchestration
+      class StartOrchestration
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
@@ -14,7 +15,7 @@ module VagrantPlugins
           return unless @config.orchestrate?
 
           m = Mutagen.new(@machine, @ui)
-          m.terminate_orchestration
+          m.start_orchestration
           @app.call(env)
         end
       end
