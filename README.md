@@ -1,4 +1,4 @@
-# Vagrant::Mutagen
+# Vagrant::Mutagen::Utilize
 
 [![Gem Version](https://badge.fury.io/rb/vagrant-mutagen.svg)](https://badge.fury.io/rb/vagrant-mutagen)
 [![Gem](https://img.shields.io/gem/dt/vagrant-mutagen.svg)](https://rubygems.org/gems/vagrant-mutagen)
@@ -6,21 +6,21 @@
 
 This plugin adds an entry to your `~/.ssh/config` file on the host system.
 
-On **up**, **resume** and **reload** commands, it tries to add the information, if it does not already exist in your config file. 
+On **up**, **resume** and **reload** commands, it tries to add the information, if it does not already exist in your config file.
 On **halt**, **destroy**, and **suspend**, those entries will be removed again.
 
 
 ## Installation
 
-    $ vagrant plugin install vagrant-mutagen
+    $ vagrant plugin install vagrant-mutagen-utilize
 
 Uninstall it with:
 
-    $ vagrant plugin uninstall vagrant-mutagen
+    $ vagrant plugin uninstall vagrant-mutagen-utilize
 
 Update the plugin with:
 
-    $ vagrant plugin update vagrant-mutagen
+    $ vagrant plugin update vagrant-mutagen-utilize
 
 ## Usage
 
@@ -61,14 +61,14 @@ sync:
 
 ## Installing development version
 
-If you would like to install vagrant-mutagen on the development version perform the following:
+If you would like to install vagrant-mutagen-utilize on the development version perform the following:
 
 ```
-git clone https://github.com/dasginganinja/vagrant-mutagen
-cd vagrant-mutagen
+git clone https://github.com/ryu-sato/vagrant-mutagen-utilize
+cd vagrant-mutagen-utilize
 git checkout develop
-gem build vagrant-mutagen.gemspec
-vagrant plugin install vagrant-mutagen-*.gem
+gem build vagrant-mutagen-utilize.gemspec
+vagrant plugin install vagrant-mutagen-utilize-*.gem
 ```
 
 ## Contributing
@@ -77,7 +77,7 @@ vagrant plugin install vagrant-mutagen-*.gem
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request on the `develop` branch
+5. Create new Pull Request
 
 
 ## Versions

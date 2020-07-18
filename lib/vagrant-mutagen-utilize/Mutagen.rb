@@ -26,10 +26,10 @@ module VagrantPlugins
         # Check for existing entry for hostname in config
         entryPattern = configEntryPattern(hostname, name, uuid)
         if configContents.match(/#{entryPattern}/)
-          @ui.info "[vagrant-mutagen]   updating SSH Config entry for: #{hostname}"
+          @ui.info "[vagrant-mutagen-utilize]   updating SSH Config entry for: #{hostname}"
           removeConfigEntries
         else
-          @ui.info "[vagrant-mutagen]   adding entry to SSH config for: #{hostname}"
+          @ui.info "[vagrant-mutagen-utilize]   adding entry to SSH config for: #{hostname}"
         end
 
         # Get SSH config from Vagrant
@@ -41,13 +41,13 @@ module VagrantPlugins
       def addToSSHConfig(content)
         return if content.length == 0
 
-        @ui.info "[vagrant-mutagen] Writing the following config to (#@@ssh_user_config_path)"
+        @ui.info "[vagrant-mutagen-utilize] Writing the following config to (#@@ssh_user_config_path)"
         @ui.info content
         if !File.writable_real?(@@ssh_user_config_path)
-          @ui.info "[vagrant-mutagen] This operation requires administrative access. You may " +
+          @ui.info "[vagrant-mutagen-utilize] This operation requires administrative access. You may " +
                        "skip it by manually adding equivalent entries to the config file."
           if !sudo(%Q(sh -c 'echo "#{content}" >> #@@ssh_user_config_path'))
-            @ui.error "[vagrant-mutagen] Failed to add config, could not use sudo"
+            @ui.error "[vagrant-mutagen-utilize] Failed to add config, could not use sudo"
           end
         elsif Vagrant::Util::Platform.windows?
           require 'tmpdir'
@@ -67,7 +67,7 @@ module VagrantPlugins
         end
       end
 
-      # Create a regular expression that will match the vagrant-mutagen signature
+      # Create a regular expression that will match the vagrant-mutagen-utilize signature
       def configEntryPattern(hostname, name, uuid = self.uuid)
         hashedId = Digest::MD5.hexdigest(uuid)
         Regexp.new("^# VAGRANT: #{hashedId}.*$\nHost #{hostname}.*$")
@@ -89,7 +89,7 @@ module VagrantPlugins
 
       def removeConfigEntries
         if !@machine.id and !@machine.config.mutagen.id
-          @ui.info "[vagrant-mutagen] No machine id, nothing removed from #@@ssh_user_config_path"
+          @ui.info "[vagrant-mutagen-utilize] No machine id, nothing removed from #@@ssh_user_config_path"
           return
         end
         configContents = File.read(@@ssh_user_config_path)
@@ -105,7 +105,7 @@ module VagrantPlugins
         hashedId = Digest::MD5.hexdigest(uuid)
         if !File.writable_real?(@@ssh_user_config_path) || Vagrant::Util::Platform.windows?
           if !sudo(%Q(sed -i -e '/# VAGRANT: #{hashedId}/,/# VAGRANT: #{hashedId}/d' #@@ssh_user_config_path))
-            @ui.error "[vagrant-mutagen] Failed to remove config, could not use sudo"
+            @ui.error "[vagrant-mutagen-utilize] Failed to remove config, could not use sudo"
           end
         else
           hosts = ""
@@ -165,12 +165,12 @@ module VagrantPlugins
         projectStartCommand = "mutagen project start"
         projectStatusCommand = "mutagen project list"
         if !system(daemonCommand)
-          @ui.error "[vagrant-mutagen] Failed to start mutagen daemon"
+          @ui.error "[vagrant-mutagen-utilize] Failed to start mutagen daemon"
         end
         if !system(projectStartedCommand) # mutagen project list returns 1 on error when no project is started
-          @ui.info "[vagrant-mutagen] Starting mutagen project orchestration (config: /mutagen.yml)"
+          @ui.info "[vagrant-mutagen-utilize] Starting mutagen project orchestration (config: /mutagen.yml)"
           if !system(projectStartCommand)
-            @ui.error "[vagrant-mutagen] Failed to start mutagen project (see error above)"
+            @ui.error "[vagrant-mutagen-utilize] Failed to start mutagen project (see error above)"
           end
         end
         system(projectStatusCommand) # show project status to indicate if there are conflicts
@@ -181,9 +181,9 @@ module VagrantPlugins
         projectTerminateCommand = "mutagen project terminate"
         projectStatusCommand = "mutagen project list #{DISCARD_STDERR}"
         if system(projectStartedCommand) # mutagen project list returns 1 on error when no project is started
-          @ui.info "[vagrant-mutagen] Stopping mutagen project orchestration"
+          @ui.info "[vagrant-mutagen-utilize] Stopping mutagen project orchestration"
           if !system(projectTerminateCommand)
-            @ui.error "[vagrant-mutagen] Failed to stop mutagen project (see error above)"
+            @ui.error "[vagrant-mutagen-utilize] Failed to stop mutagen project (see error above)"
           end
         end
         system(projectStatusCommand)

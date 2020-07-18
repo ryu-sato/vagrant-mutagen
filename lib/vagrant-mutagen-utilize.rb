@@ -1,5 +1,5 @@
-require "vagrant-mutagen/version"
-require "vagrant-mutagen/plugin"
+require "vagrant-mutagen-utilize/version"
+require "vagrant-mutagen-utilize/plugin"
 
 module VagrantPlugins
   module Mutagen

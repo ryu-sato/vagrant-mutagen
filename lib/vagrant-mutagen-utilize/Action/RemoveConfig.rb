@@ -16,7 +16,7 @@ module VagrantPlugins
             if machine_action != :suspend
               if machine_action != :halt
                 if mutagen_enabled
-                  @ui.info "[vagrant-mutagen] Removing SSH config entry"
+                  @ui.info "[vagrant-mutagen-utilize] Removing SSH config entry"
                   removeConfigEntries
                 end
               end

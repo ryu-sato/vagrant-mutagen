@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'vagrant-mutagen/version'
+require 'vagrant-mutagen-utilize/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'vagrant-mutagen'
+  spec.name          = 'vagrant-mutagen-utilize'
   spec.version       = VagrantPlugins::Mutagen::VERSION
-  spec.authors       = ['Tom Donahue']
-  spec.email         = ['dasginganinja@gmail.com']
+  spec.authors       = ['Ryu Sato']
+  spec.email         = ['ryu@weseek.co.jp']
   spec.description   = %q{Enables Vagrant to utilize mutagen for project sync}
   spec.summary       = spec.description
-  spec.homepage      = 'https://github.com/dasginganinja/vagrant-mutagen'
+  spec.homepage      = 'https://github.com/ryu-sato/vagrant-mutagen-utilize'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split($/)

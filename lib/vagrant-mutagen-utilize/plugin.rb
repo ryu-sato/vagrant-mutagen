@@ -1,8 +1,8 @@
-require "vagrant-mutagen/Action/UpdateConfig"
-require "vagrant-mutagen/Action/CacheConfig"
-require "vagrant-mutagen/Action/RemoveConfig"
-require "vagrant-mutagen/Action/StartOrchestration"
-require "vagrant-mutagen/Action/TerminateOrchestration"
+require "vagrant-mutagen-utilize/Action/UpdateConfig"
+require "vagrant-mutagen-utilize/Action/CacheConfig"
+require "vagrant-mutagen-utilize/Action/RemoveConfig"
+require "vagrant-mutagen-utilize/Action/StartOrchestration"
+require "vagrant-mutagen-utilize/Action/TerminateOrchestration"
 
 module VagrantPlugins
   module Mutagen
