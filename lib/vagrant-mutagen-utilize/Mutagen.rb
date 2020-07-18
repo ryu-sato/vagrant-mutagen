@@ -1,5 +1,3 @@
-#TODO: remove before commit, just used for testing with .to_yaml function
-require 'yaml'
 module VagrantPlugins
   module Mutagen
     module Mutagen
@@ -151,12 +149,8 @@ module VagrantPlugins
         end
       end
 
-      def orchestration_enabled()
-        return @machine.config.mutagen.orchestrate == true
-      end
-
-      def mutagen_enabled()
-        return orchestration_enabled()
+      def plugin_orchestrate?(env)
+        env[:machine].config.mutagen_utilize.orchestrate == true
       end
 
       def startOrchestration()

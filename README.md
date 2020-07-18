@@ -26,7 +26,7 @@ Update the plugin with:
 
 You need to set `orchestrate` and `config.vm.hostname`.
 
-    config.mutagen.orchestrate = true
+    config.mutagen_utilize.orchestrate = true
 
 This hostname will be used for the entry in the `~/.ssh/config` file.
 

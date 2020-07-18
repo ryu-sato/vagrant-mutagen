@@ -11,6 +11,8 @@ module VagrantPlugins
         end
 
         def call(env)
+          return unless plugin_orchestrate?(env)
+
           @ui.info "[vagrant-mutagen-utilize] Removing SSH config entry"
           removeConfigEntries
           @app.call(env)

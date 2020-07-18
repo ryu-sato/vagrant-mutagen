@@ -10,9 +10,9 @@ module VagrantPlugins
         end
 
         def call(env)
-          if mutagen_enabled
-            cacheConfigEntries
-          end
+          return unless plugin_orchestrate?(env)
+
+          cacheConfigEntries
           @app.call(env)
         end
 

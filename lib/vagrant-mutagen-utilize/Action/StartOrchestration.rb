@@ -13,9 +13,9 @@ module VagrantPlugins
         end
 
         def call(env)
-          if mutagen_enabled
-            startOrchestration
-          end
+          return unless plugin_orchestrate?(env)
+
+          startOrchestration
           @app.call(env)
         end
 
