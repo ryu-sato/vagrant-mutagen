@@ -7,27 +7,24 @@ module VagrantPlugins
       end
 
       def append_ssh_config_entry
-        logging(:info, 'Checking for SSH config entries')
-
         hostname = @machine.config.vm.hostname
-        name = @machine.name
-        uuid = @machine.id
 
-        if config_entry_exist?(hostname, name, uuid)
+        logging(:info, 'Checking for SSH config entries')
+        if ssh_config_entry_exist?
           logging(:info, "  updating SSH Config entry for: #{hostname}")
           remove_from_ssh_config
         else
           logging(:info, "  adding entry to SSH config for: #{hostname}")
         end
-        append_to_ssh_config(ssh_config_entry(hostname, name, uuid))
+        append_to_ssh_config(ssh_config_entry)
       end
 
       def remove_ssh_config_entry
         if !@machine.id && !@machine.config.mutagen_utilize.id
-          logging(:info, 'No machine id, nothing removed from #ssh_user_config_path')
+          logging(:info, "No machine id, nothing removed from #{ssh_user_config_path}")
           return
         end
-        return unless config_entry_exist?(@machine.config.vm.hostname, @machine.name, @machine.id)
+        return unless ssh_config_entry_exist?
 
         logging(:info, 'Removing SSH config entry')
         remove_from_ssh_config
@@ -74,7 +71,11 @@ module VagrantPlugins
         %(# VAGRANT: #{hashedId} (#{name}) / #{uuid})
       end
 
-      def ssh_config_entry(hostname, name, uuid = self.uuid)
+      def ssh_config_entry
+        hostname = @machine.config.vm.hostname
+        name = @machine.name
+        uuid = @machine.id || self.uuid
+
         # Get the SSH config from Vagrant
         sshconfig = `vagrant ssh-config --host #{hostname}`
         # Trim Whitespace from end
@@ -84,7 +85,11 @@ module VagrantPlugins
         %(#{signature(name, uuid)}\n#{sshconfig}\n#{signature(name, uuid)})
       end
 
-      def config_entry_exist?(hostname, name, uuid)
+      def ssh_config_entry_exist?
+        hostname = @machine.config.vm.hostname
+        name = @machine.name
+        uuid = @machine.id
+
         content = File.read(ssh_user_config_path)
         entry_pattern = ssh_config_entry_pattern(hostname, name, uuid)
 
