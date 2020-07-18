@@ -13,7 +13,7 @@ module VagrantPlugins
           return unless @config.orchestrate?
 
           m = Mutagen.new(@machine, @ui)
-          m.cacheConfigEntries
+          m.cache_config_entry
           @app.call(env)
         end
       end
