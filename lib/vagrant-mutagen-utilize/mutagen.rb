@@ -59,11 +59,11 @@ module VagrantPlugins
       def ssh_config_entry_pattern
         hostname = @machine.config.vm.hostname
 
-        Regexp.new("^(#{segnature}).*$\nHost #{hostname}.*$")
+        Regexp.new("^(#{Regexp.escape(signature)}).*$\nHost #{hostname}.*$")
       end
 
       def ssh_config_removing_pattern
-        Regexp.new("^(#{segnature}).*?(^#{segnature}).*$", Regexp::MULTILINE)
+        Regexp.new("^(#{Regexp.escape(signature)}).*?(^#{Regexp.escape(signature)}).*$", Regexp::MULTILINE)
       end
 
       def signature
@@ -87,10 +87,7 @@ module VagrantPlugins
       end
 
       def ssh_config_entry_exist?
-        content = File.read(ssh_user_config_path)
-        entry_pattern = ssh_config_entry_pattern
-
-        content.match(/#{entry_pattern}/)
+        File.read(ssh_user_config_path).match?(ssh_config_entry_pattern)
       end
 
       def append_to_ssh_config(content)

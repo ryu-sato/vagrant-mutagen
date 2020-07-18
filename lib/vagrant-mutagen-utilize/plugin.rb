@@ -1,5 +1,4 @@
 require 'vagrant-mutagen-utilize/action/update_config'
-require 'vagrant-mutagen-utilize/action/cache_config'
 require 'vagrant-mutagen-utilize/action/remove_config'
 require 'vagrant-mutagen-utilize/action/start_orchestration'
 require 'vagrant-mutagen-utilize/action/terminate_orchestration'
