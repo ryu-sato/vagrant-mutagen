@@ -1,22 +1,24 @@
 require_relative '../mutagen'
 
-module VagrantPlugins
+module Vagrant
   module Mutagen
-    module Action
-      class RemoveConfig
-        def initialize(app, env)
-          @app = app
-          @machine = env[:machine]
-          @config = env[:machine].config
-          @ui = env[:ui]
-        end
+    module Utilize
+      module Action
+        class RemoveConfig
+          def initialize(app, env)
+            @app = app
+            @machine = env[:machine]
+            @config = env[:machine].config
+            @ui = env[:ui]
+          end
 
-        def call(env)
-          return unless @config.orchestrate?
+          def call(env)
+            return unless @config.orchestrate?
 
-          m = Mutagen.new(@machine, @ui)
-          m.remove_ssh_config_entry
-          @app.call(env)
+            m = Mutagen.new(@machine, @ui)
+            m.remove_ssh_config_entry
+            @app.call(env)
+          end
         end
       end
     end

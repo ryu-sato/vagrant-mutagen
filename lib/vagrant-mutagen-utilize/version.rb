@@ -1,5 +1,7 @@
-module VagrantPlugins
+module Vagrant
   module Mutagen
-    VERSION = '0.1.2'.freeze
+    module Utilize
+      VERSION = '0.1.2'.freeze
+    end
   end
 end
