@@ -2,26 +2,24 @@
 
 require_relative '../orchestrator'
 
-module Vagrant
-  module Mutagen
-    module Utilizer
-      module Action
-        # Remove SSH config entry from user ssh config file
-        class RemoveConfig
-          def initialize(app, env)
-            @app = app
-            @machine = env[:machine]
-            @config = env[:machine].config
-            @console = env[:ui]
-          end
+module VagrantPlugins
+  module MutagenUtilizer
+    module Action
+      # Remove SSH config entry from user ssh config file
+      class RemoveConfig
+        def initialize(app, env)
+          @app = app
+          @machine = env[:machine]
+          @config = env[:machine].config
+          @console = env[:ui]
+        end
 
-          def call(env)
-            return unless @config.orchestrate?
+        def call(env)
+          return unless @config.orchestrate?
 
-            o = Orchestrator.new(@machine, @console)
-            o.remove_ssh_config_entry
-            @app.call(env)
-          end
+          o = Orchestrator.new(@machine, @console)
+          o.remove_ssh_config_entry
+          @app.call(env)
         end
       end
     end

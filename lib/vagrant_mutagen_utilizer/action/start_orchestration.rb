@@ -2,26 +2,24 @@
 
 require_relative '../orchestrator'
 
-module Vagrant
-  module Mutagen
-    module Utilizer
-      module Action
-        # Start mutagen project
-        class StartOrchestration
-          def initialize(app, env)
-            @app = app
-            @machine = env[:machine]
-            @config = env[:machine].config
-            @console = env[:ui]
-          end
+module VagrantPlugins
+  module MutagenUtilizer
+    module Action
+      # Start mutagen project
+      class StartOrchestration
+        def initialize(app, env)
+          @app = app
+          @machine = env[:machine]
+          @config = env[:machine].config
+          @console = env[:ui]
+        end
 
-          def call(env)
-            return unless @config.orchestrate?
+        def call(env)
+          return unless @config.orchestrate?
 
-            o = Orchestrator.new(@machine, @console)
-            o.start_orchestration
-            @app.call(env)
-          end
+          o = Orchestrator.new(@machine, @console)
+          o.start_orchestration
+          @app.call(env)
         end
       end
     end
