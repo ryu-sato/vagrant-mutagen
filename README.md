@@ -66,14 +66,14 @@ sync:
 
 ## Installing development version
 
-If you would like to install vagrant-mutagen-utilize on the development version perform the following:
+If you would like to install vagrant-mutagen-utilizer on the development version perform the following:
 
 ```
-git clone https://github.com/ryu-sato/vagrant-mutagen-utilize
-cd vagrant-mutagen-utilize
+git clone https://github.com/ryu-sato/vagrant-mutagen-utilizer
+cd vagrant-mutagen-utilizer
 git checkout develop
-gem build vagrant-mutagen-utilize.gemspec
-vagrant plugin install vagrant-mutagen-utilize-*.gem
+gem build vagrant-mutagen-utilizer.gemspec
+vagrant plugin install vagrant-mutagen-utilizer-*.gem
 ```
 
 ## Contributing
