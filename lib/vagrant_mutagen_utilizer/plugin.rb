@@ -4,6 +4,7 @@ require_relative 'action/update_config'
 require_relative 'action/remove_config'
 require_relative 'action/start_orchestration'
 require_relative 'action/terminate_orchestration'
+require_relative 'action/save_machine_identifier'
 
 module VagrantPlugins
   module MutagenUtilizer
