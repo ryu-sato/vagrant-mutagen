@@ -1,32 +1,37 @@
-# Vagrant::Mutagen
+# Vagrant::Mutagen::Utilizer
 
-[![Gem Version](https://badge.fury.io/rb/vagrant-mutagen.svg)](https://badge.fury.io/rb/vagrant-mutagen)
-[![Gem](https://img.shields.io/gem/dt/vagrant-mutagen.svg)](https://rubygems.org/gems/vagrant-mutagen)
-[![Gem](https://img.shields.io/gem/dtv/vagrant-mutagen.svg)](https://rubygems.org/gems/vagrant-mutagen)
+This plugin forked from [vagrant-mutagen](https://github.com/dasginganinja/vagrant-mutagen) and made the following modifications.
+
+* Is is not to be elevated to administrative privileges
+  * In many cases, the plugin executor has permission of SSH user configuration file
+* Organized orchestration related to VM status (Basic ideas is below)
+  * Have an entry in the SSH configuration file exist only while the VM is running
+  * Running an project of mutagen only while the VM is running
+
 
 This plugin adds an entry to your `~/.ssh/config` file on the host system.
 
-On **up**, **resume** and **reload** commands, it tries to add the information, if it does not already exist in your config file. 
+On **up**, **resume** and **reload** commands, it tries to add the information, if it does not already exist in your config file.
 On **halt**, **destroy**, and **suspend**, those entries will be removed again.
 
 
 ## Installation
 
-    $ vagrant plugin install vagrant-mutagen
+    $ vagrant plugin install vagrant-mutagen-utilizer
 
 Uninstall it with:
 
-    $ vagrant plugin uninstall vagrant-mutagen
+    $ vagrant plugin uninstall vagrant-mutagen-utilizer
 
 Update the plugin with:
 
-    $ vagrant plugin update vagrant-mutagen
+    $ vagrant plugin update vagrant-mutagen-utilizer
 
 ## Usage
 
 You need to set `orchestrate` and `config.vm.hostname`.
 
-    config.mutagen.orchestrate = true
+    config.mutagen_utilizer.orchestrate = true
 
 This hostname will be used for the entry in the `~/.ssh/config` file.
 
@@ -61,14 +66,14 @@ sync:
 
 ## Installing development version
 
-If you would like to install vagrant-mutagen on the development version perform the following:
+If you would like to install vagrant-mutagen-utilizer on the development version perform the following:
 
 ```
-git clone https://github.com/dasginganinja/vagrant-mutagen
-cd vagrant-mutagen
+git clone https://github.com/ryu-sato/vagrant-mutagen-utilizer
+cd vagrant-mutagen-utilizer
 git checkout develop
-gem build vagrant-mutagen.gemspec
-vagrant plugin install vagrant-mutagen-*.gem
+gem build vagrant-mutagen-utilizer.gemspec
+vagrant plugin install vagrant-mutagen-utilizer-*.gem
 ```
 
 ## Contributing
@@ -77,24 +82,7 @@ vagrant plugin install vagrant-mutagen-*.gem
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request on the `develop` branch
+5. Create new Pull Request
 
 
 ## Versions
-
-### 0.1.2
-* Issues with multiple VMs arose due to outdated SSH config. SSH config is now regenerated each `vagrant up`.
-
-### 0.1.1
-* Added mutagen.yml example
-
-### 0.1.0
-* Added config to enable orchestration.
-* Added new actions to start and terminate orchestration.
-* Hooked new actions into vagrant lifecycle events.
-* Refactored vagrant-hostsupdater hosts commands for config.
-
-### 0.0.1
-* Started with vagrant-hostsupdater 1.1.0
-* Changed all references of hostsupdater to mutagen.
-* Have not tested anything, but this is pushed up.

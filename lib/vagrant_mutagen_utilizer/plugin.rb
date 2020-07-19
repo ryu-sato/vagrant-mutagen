@@ -1,69 +1,62 @@
-require "vagrant-mutagen/Action/UpdateConfig"
-require "vagrant-mutagen/Action/CacheConfig"
-require "vagrant-mutagen/Action/RemoveConfig"
-require "vagrant-mutagen/Action/StartOrchestration"
-require "vagrant-mutagen/Action/TerminateOrchestration"
+# frozen_string_literal: true
+
+require_relative 'action/update_config'
+require_relative 'action/remove_config'
+require_relative 'action/start_orchestration'
+require_relative 'action/terminate_orchestration'
+require_relative 'action/save_machine_identifier'
 
 module VagrantPlugins
-  module Mutagen
-    class Plugin < Vagrant.plugin('2')
-      name 'Mutagen'
+  module MutagenUtilizer
+    # Plugin to utilize mutagen
+    class MutagenUtilizerPlugin < Vagrant.plugin('2')
+      name 'Mutagen Utilizer'
       description <<-DESC
         This plugin manages the ~/.ssh/config file for the host machine. An entry is
         created for the hostname attribute in the vm.config.
       DESC
 
-      config(:mutagen) do
+      config(:mutagen_utilizer) do
         require_relative 'config'
         Config
       end
 
-      action_hook(:mutagen, :machine_action_up) do |hook|
+      action_hook(:mutagen_utilizer, :machine_action_up) do |hook|
         hook.append(Action::UpdateConfig)
         hook.append(Action::StartOrchestration)
       end
 
-      action_hook(:mutagen, :machine_action_provision) do |hook|
+      action_hook(:mutagen_utilizer, :machine_action_provision) do |hook|
         hook.before(Vagrant::Action::Builtin::Provision, Action::UpdateConfig)
         hook.before(Vagrant::Action::Builtin::Provision, Action::StartOrchestration)
       end
 
-      action_hook(:mutagen, :machine_action_halt) do |hook|
+      action_hook(:mutagen_utilizer, :machine_action_halt) do |hook|
         hook.append(Action::TerminateOrchestration)
         hook.append(Action::RemoveConfig)
       end
 
-      action_hook(:mutagen, :machine_action_suspend) do |hook|
+      action_hook(:mutagen_utilizer, :machine_action_suspend) do |hook|
         hook.append(Action::TerminateOrchestration)
         hook.append(Action::RemoveConfig)
       end
 
-      action_hook(:mutagen, :machine_action_destroy) do |hook|
-        hook.prepend(Action::CacheConfig)
-      end
-
-      action_hook(:mutagen, :machine_action_destroy) do |hook|
-        hook.append(Action::TerminateOrchestration)
+      action_hook(:mutagen_utilizer, :machine_action_destroy) do |hook|
+        hook.prepend(Action::SaveMachineIdentifier)
         hook.append(Action::RemoveConfig)
+        hook.append(Action::TerminateOrchestration)
       end
 
-      action_hook(:mutagen, :machine_action_reload) do |hook|
+      action_hook(:mutagen_utilizer, :machine_action_reload) do |hook|
         hook.append(Action::TerminateOrchestration)
-        hook.prepend(Action::RemoveConfig)
         hook.append(Action::UpdateConfig)
         hook.append(Action::StartOrchestration)
       end
 
-      action_hook(:mutagen, :machine_action_resume) do |hook|
+      action_hook(:mutagen_utilizer, :machine_action_resume) do |hook|
         hook.append(Action::TerminateOrchestration)
-        hook.prepend(Action::RemoveConfig)
         hook.append(Action::UpdateConfig)
         hook.append(Action::StartOrchestration)
-      end
-
-      command(:mutagen) do
-        require_relative 'command'
-        Command
       end
     end
   end
