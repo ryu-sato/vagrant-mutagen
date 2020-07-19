@@ -4,7 +4,7 @@ require_relative '../orchestrator'
 
 module Vagrant
   module Mutagen
-    module Utilize
+    module Utilizer
       module Action
         # Start mutagen project
         class StartOrchestration

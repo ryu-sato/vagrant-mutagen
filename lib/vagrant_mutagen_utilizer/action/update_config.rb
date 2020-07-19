@@ -4,7 +4,7 @@ require_relative '../orchestrator'
 
 module Vagrant
   module Mutagen
-    module Utilize
+    module Utilizer
       module Action
         # Update ssh config entry
         # If ssh config entry already exists, just entry appended

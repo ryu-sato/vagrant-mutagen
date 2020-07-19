@@ -7,7 +7,7 @@ require_relative 'action/terminate_orchestration'
 
 module Vagrant
   module Mutagen
-    module Utilize
+    module Utilizer
       # Plugin to utilize mutagen
       class MutagenUtilizerPlugin < Vagrant.plugin('2')
         name 'Mutagen Utilize'

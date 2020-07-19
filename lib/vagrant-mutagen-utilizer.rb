@@ -6,7 +6,7 @@ require 'vagrant_mutagen_utilizer/plugin'
 module Vagrant
   module Mutagen
     # Utilize
-    module Utilize
+    module Utilizer
       def self.source_root
         @source_root ||= Pathname.new(File.expand_path('..', __dir__))
       end

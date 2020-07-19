@@ -4,7 +4,7 @@ require 'vagrant_mutagen_utilizer/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'vagrant-mutagen-utilizer'
-  spec.version       = Vagrant::Mutagen::Utilize::VERSION
+  spec.version       = Vagrant::Mutagen::Utilizer::VERSION
   spec.authors       = ['Ryu Sato']
   spec.email         = ['ryu@weseek.co.jp']
   spec.description   = 'Enables Vagrant to utilize mutagen for project sync'

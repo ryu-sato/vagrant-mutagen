@@ -2,7 +2,7 @@
 
 module Vagrant
   module Mutagen
-    module Utilize
+    module Utilizer
       # Class for orchestrate with mutagen
       class Orchestrator
         def initialize(machine, console)
