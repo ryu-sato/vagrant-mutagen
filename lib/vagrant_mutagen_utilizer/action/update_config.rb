@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../mutagen'
+require_relative '../orchestrator'
 
 module Vagrant
   module Mutagen
@@ -19,8 +19,8 @@ module Vagrant
           def call(env)
             return unless @config.orchestrate?
 
-            m = Mutagen.new(@machine, @console)
-            m.update_ssh_config_entry
+            o = Orchestrator.new(@machine, @console)
+            o.update_ssh_config_entry
             @app.call(env)
           end
         end

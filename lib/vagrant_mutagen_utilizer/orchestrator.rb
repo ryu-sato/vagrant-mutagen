@@ -3,8 +3,8 @@
 module Vagrant
   module Mutagen
     module Utilize
-      # Mutagen utilize class
-      class Mutagen
+      # Class for orchestrate with mutagen
+      class Orchestrator
         def initialize(machine, console)
           @machine = machine
           @console = console

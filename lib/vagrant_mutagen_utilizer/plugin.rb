@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'vagrant_mutagen_utilize/action/update_config'
-require 'vagrant_mutagen_utilize/action/remove_config'
-require 'vagrant_mutagen_utilize/action/start_orchestration'
-require 'vagrant_mutagen_utilize/action/terminate_orchestration'
+require_relative 'action/update_config'
+require_relative 'action/remove_config'
+require_relative 'action/start_orchestration'
+require_relative 'action/terminate_orchestration'
 
 module Vagrant
   module Mutagen
     module Utilize
       # Plugin to utilize mutagen
-      class MutagenUtilizePlugin < Vagrant.plugin('2')
+      class MutagenUtilizerPlugin < Vagrant.plugin('2')
         name 'Mutagen Utilize'
         description <<-DESC
         This plugin manages the ~/.ssh/config file for the host machine. An entry is

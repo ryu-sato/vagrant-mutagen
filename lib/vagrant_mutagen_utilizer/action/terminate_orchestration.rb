@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../mutagen'
+require_relative '../orchestrator'
 
 module Vagrant
   module Mutagen
     module Utilize
       module Action
-        # Remove SSH config entry from user ssh config file
-        class RemoveConfig
+        # Terminate mutagen project
+        class TerminateOrchestration
           def initialize(app, env)
             @app = app
             @machine = env[:machine]
@@ -18,8 +18,8 @@ module Vagrant
           def call(env)
             return unless @config.orchestrate?
 
-            m = Mutagen.new(@machine, @console)
-            m.remove_ssh_config_entry
+            o = Orchestrator.new(@machine, @console)
+            o.terminate_orchestration
             @app.call(env)
           end
         end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'vagrant_mutagen_utilize/version'
-require 'vagrant_mutagen_utilize/plugin'
+require 'vagrant_mutagen_utilizer/version'
+require 'vagrant_mutagen_utilizer/plugin'
 
 module Vagrant
   module Mutagen

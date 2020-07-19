@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative '../mutagen'
+require_relative '../orchestrator'
 
 module Vagrant
   module Mutagen
     module Utilize
       module Action
-        # Terminate mutagen project
-        class TerminateOrchestration
+        # Start mutagen project
+        class StartOrchestration
           def initialize(app, env)
             @app = app
             @machine = env[:machine]
@@ -18,8 +18,8 @@ module Vagrant
           def call(env)
             return unless @config.orchestrate?
 
-            m = Mutagen.new(@machine, @console)
-            m.terminate_orchestration
+            o = Orchestrator.new(@machine, @console)
+            o.start_orchestration
             @app.call(env)
           end
         end
