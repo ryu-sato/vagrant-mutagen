@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
 module Vagrant
   module Mutagen
     module Utilize
+      # Mutagen utilize class
       class Mutagen
-        def initialize(machine, ui)
+        def initialize(machine, console)
           @machine = machine
-          @ui = ui
+          @console = console
         end
 
         # Update ssh config entry
@@ -35,7 +38,8 @@ module Vagrant
 
           logging(:info, 'Starting mutagen project orchestration (config: /mutagen.yml)')
           start_mutagen_project || logging(:error, 'Failed to start mutagen project (see error above)')
-          list_mutagen_project # show project status to indicate if there are conflicts
+          # show project status to indicate if there are conflicts
+          list_mutagen_project
         end
 
         def terminate_orchestration
@@ -49,7 +53,7 @@ module Vagrant
 
         def logging(level, message, with_prefix = true)
           prefix = with_prefix ? '[vagrant-mutagen-utilize] ' : ''
-          @ui.send(level, "#{prefix}#{message}")
+          @console.send(level, "#{prefix}#{message}")
         end
 
         def ssh_user_config_path
@@ -70,9 +74,9 @@ module Vagrant
         def signature
           name = @machine.name
           uuid = @machine.id
-          hashedId = Digest::MD5.hexdigest(uuid)
+          hashed_id = Digest::MD5.hexdigest(uuid)
 
-          %(# VAGRANT: #{hashedId} (#{name}) / #{uuid})
+          %(# VAGRANT: #{hashed_id} (#{name}) / #{uuid})
         end
 
         def ssh_config_entry
@@ -91,29 +95,29 @@ module Vagrant
           File.read(ssh_user_config_path).match?(ssh_config_entry_pattern)
         end
 
-        def append_to_ssh_config(content)
-          return if content.length == 0
+        def validate_ssh_config_writable
+          return true if File.writable_real?(ssh_user_config_path)
 
-          unless File.writable_real?(ssh_user_config_path)
-            logging(:info, 'This operation requires administrative access. You may ' +
-                    'skip it by manually adding equivalent entries to the config file.')
-            return
-          end
+          logging(:info, "You don't have permission of #{ssh_user_config_path}. " \
+                  'You should manually adding equivalent entries to the config file.')
+
+          false
+        end
+
+        def append_to_ssh_config(entry)
+          return if entry.length.zero?
+          return unless validate_ssh_config_writable
 
           logging(:info, "Writing the following config to (#{ssh_user_config_path})")
-          logging(:info, content, false)
+          logging(:info, entry, false)
           append_line_feed_to_end_of_file_if_not_exist(ssh_user_config_path)
-          hostsFile = File.open(ssh_user_config_path, 'a') do |f|
-            f.write(content)
+          File.open(ssh_user_config_path, 'a') do |f|
+            f.write(entry)
           end
         end
 
         def remove_from_ssh_config
-          unless File.writable_real?(ssh_user_config_path)
-            logging(:info, 'This operation requires administrative access. You may ' +
-                    'skip it by manually adding equivalent entries to the config file.')
-            return
-          end
+          return unless validate_ssh_config_writable
 
           content = File.read(ssh_user_config_path)
           new_content = content.gsub(ssh_config_removing_pattern, '')
@@ -123,13 +127,13 @@ module Vagrant
         end
 
         def append_line_feed_to_end_of_file_if_not_exist(path)
-          # Set "true" as default because when it doesn't know if file is ending with line feed or not, it should not add the line feed.
+          # It is set "true" as default because
+          #   when it doesn't know if file is ending with line feed or not, it should not add the line feed.
           is_file_end_with_line_feed = true
           File.open(path, 'a+') do |f|
-            if f.seek(-1, IO::SEEK_END) == 0
-              c = f.getc
-              is_file_end_with_line_feed = false if c != "\r" && c != "\n"
-            end
+            f.seek(-1, IO::SEEK_END).zero? || (logging(:warning, "Cannot seek file #{path}") && break)
+            c = f.getc
+            is_file_end_with_line_feed = false if c != "\r" && c != "\n"
           end
           return if is_file_end_with_line_feed
 
@@ -142,10 +146,11 @@ module Vagrant
         DISCARD_STDOUT = Vagrant::Util::Platform.windows? ? '>nul'  : '>/dev/null'
         DISCARD_STDERR = Vagrant::Util::Platform.windows? ? '2>nul' : '2>/dev/null'
         MUTAGEN_METHODS = {
-          "mutagen_project_started?": "mutagen project list #{DISCARD_STDOUT} #{DISCARD_STDERR}", # mutagen project list returns 1 on error when no project is started
-          "start_mutagen_project": 'mutagen project start',
-          "terminate_mutagen_project": 'mutagen project terminate',
-          "list_mutagen_project": 'mutagen project list'
+          # mutagen project list returns 1 on error when no project is started
+          "mutagen_project_started?": "mutagen project list #{DISCARD_STDOUT} #{DISCARD_STDERR}",
+          'start_mutagen_project': 'mutagen project start',
+          'terminate_mutagen_project': 'mutagen project terminate',
+          'list_mutagen_project': 'mutagen project list'
         }.freeze
         MUTAGEN_METHODS.each_pair do |method_name, command|
           define_method method_name do

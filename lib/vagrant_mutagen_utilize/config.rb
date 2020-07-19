@@ -1,8 +1,12 @@
+# frozen_string_literal: true
+
 require 'vagrant'
 
 module Vagrant
   module Mutagen
     module Utilize
+      # Config
+      # You can access Config class through machine object (ex. machine.config)
       class Config < Vagrant.plugin('2', :config)
         attr_accessor :orchestrate
         attr_accessor :ssh_user_config_path

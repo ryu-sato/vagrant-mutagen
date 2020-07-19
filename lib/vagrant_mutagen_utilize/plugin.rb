@@ -1,11 +1,14 @@
-require 'vagrant-mutagen-utilize/action/update_config'
-require 'vagrant-mutagen-utilize/action/remove_config'
-require 'vagrant-mutagen-utilize/action/start_orchestration'
-require 'vagrant-mutagen-utilize/action/terminate_orchestration'
+# frozen_string_literal: true
+
+require 'vagrant_mutagen_utilize/action/update_config'
+require 'vagrant_mutagen_utilize/action/remove_config'
+require 'vagrant_mutagen_utilize/action/start_orchestration'
+require 'vagrant_mutagen_utilize/action/terminate_orchestration'
 
 module Vagrant
   module Mutagen
     module Utilize
+      # Plugin to utilize mutagen
       class MutagenUtilizePlugin < Vagrant.plugin('2')
         name 'Mutagen Utilize'
         description <<-DESC

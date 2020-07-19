@@ -1,6 +1,6 @@
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'vagrant-mutagen-utilize/version'
+require 'vagrant_mutagen_utilize/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'vagrant-mutagen-utilize'
