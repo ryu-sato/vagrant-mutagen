@@ -58,7 +58,7 @@ module Vagrant
         end
 
         def ssh_user_config_path
-          @machine.config.mutagen_utilize.ssh_user_config_path
+          @machine.config.mutagen_utilizer.ssh_user_config_path
         end
 
         # Create a regular expression that will match the vagrant-mutagen-utilize signature

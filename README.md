@@ -1,8 +1,13 @@
-# Vagrant::Mutagen::Utilize
+# Vagrant::Mutagen::Utilizer
 
-[![Gem Version](https://badge.fury.io/rb/vagrant-mutagen.svg)](https://badge.fury.io/rb/vagrant-mutagen)
-[![Gem](https://img.shields.io/gem/dt/vagrant-mutagen.svg)](https://rubygems.org/gems/vagrant-mutagen)
-[![Gem](https://img.shields.io/gem/dtv/vagrant-mutagen.svg)](https://rubygems.org/gems/vagrant-mutagen)
+This plugin forked from [vagrant-mutagen](https://github.com/dasginganinja/vagrant-mutagen) and made the following modifications.
+
+* Is is not to be elevated to administrative privileges
+  * In many cases, the plugin executor has permission of SSH user configuration file
+* Organized orchestration related to VM status (Basic ideas is below)
+  * Have an entry in the SSH configuration file exist only while the VM is running
+  * Running an project of mutagen only while the VM is running
+
 
 This plugin adds an entry to your `~/.ssh/config` file on the host system.
 
@@ -12,21 +17,21 @@ On **halt**, **destroy**, and **suspend**, those entries will be removed again.
 
 ## Installation
 
-    $ vagrant plugin install vagrant-mutagen-utilize
+    $ vagrant plugin install vagrant-mutagen-utilizer
 
 Uninstall it with:
 
-    $ vagrant plugin uninstall vagrant-mutagen-utilize
+    $ vagrant plugin uninstall vagrant-mutagen-utilizer
 
 Update the plugin with:
 
-    $ vagrant plugin update vagrant-mutagen-utilize
+    $ vagrant plugin update vagrant-mutagen-utilizer
 
 ## Usage
 
 You need to set `orchestrate` and `config.vm.hostname`.
 
-    config.mutagen_utilize.orchestrate = true
+    config.mutagen_utilizer.orchestrate = true
 
 This hostname will be used for the entry in the `~/.ssh/config` file.
 
@@ -81,20 +86,3 @@ vagrant plugin install vagrant-mutagen-utilize-*.gem
 
 
 ## Versions
-
-### 0.1.2
-* Issues with multiple VMs arose due to outdated SSH config. SSH config is now regenerated each `vagrant up`.
-
-### 0.1.1
-* Added mutagen.yml example
-
-### 0.1.0
-* Added config to enable orchestration.
-* Added new actions to start and terminate orchestration.
-* Hooked new actions into vagrant lifecycle events.
-* Refactored vagrant-hostsupdater hosts commands for config.
-
-### 0.0.1
-* Started with vagrant-hostsupdater 1.1.0
-* Changed all references of hostsupdater to mutagen.
-* Have not tested anything, but this is pushed up.
