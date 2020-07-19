@@ -53,6 +53,7 @@ module Vagrant
 
         def logging(level, message, with_prefix = true)
           prefix = with_prefix ? '[vagrant-mutagen-utilize] ' : ''
+
           @console.send(level, "#{prefix}#{message}")
         end
 
@@ -68,7 +69,9 @@ module Vagrant
         end
 
         def ssh_config_removing_pattern
-          Regexp.new("^(#{Regexp.escape(signature)}).*?(^#{Regexp.escape(signature)}).*$", Regexp::MULTILINE)
+          escaped_signature = Regexp.escape(signature)
+
+          Regexp.new("^(#{escaped_signature}).*?(^#{escaped_signature}).*$", Regexp::MULTILINE)
         end
 
         def signature
