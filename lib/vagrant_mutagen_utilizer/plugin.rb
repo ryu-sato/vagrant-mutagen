@@ -9,7 +9,7 @@ module VagrantPlugins
   module MutagenUtilizer
     # Plugin to utilize mutagen
     class MutagenUtilizerPlugin < Vagrant.plugin('2')
-      name 'Mutagen Utilize'
+      name 'Mutagen Utilizer'
       description <<-DESC
         This plugin manages the ~/.ssh/config file for the host machine. An entry is
         created for the hostname attribute in the vm.config.
