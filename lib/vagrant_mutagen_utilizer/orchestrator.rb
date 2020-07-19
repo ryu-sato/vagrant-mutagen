@@ -48,6 +48,10 @@ module VagrantPlugins
         terminate_mutagen_project || logging(:error, 'Failed to terminate mutagen project (see error above)')
       end
 
+      def save_machine_identifier
+        @machine.config.mutagen_utilizer.machine_id = @machine.id
+      end
+
       private
 
       def logging(level, message, with_prefix = true)
@@ -75,7 +79,8 @@ module VagrantPlugins
 
       def signature
         name = @machine.name
-        uuid = @machine.id
+        # When destroing a VM, the machine.id is set to nil, so it refer the ID saved before destroying.
+        uuid = @machine.id || @machine.config.mutagen_utilizer.machine_id
         hashed_id = Digest::MD5.hexdigest(uuid)
 
         %(# VAGRANT: #{hashed_id} (#{name}) / #{uuid})

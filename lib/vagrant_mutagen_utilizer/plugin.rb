@@ -42,8 +42,9 @@ module VagrantPlugins
       end
 
       action_hook(:mutagen_utilizer, :machine_action_destroy) do |hook|
-        hook.prepend(Action::RemoveConfig)
-        hook.prepend(Action::TerminateOrchestration)
+        hook.prepend(Action::SaveMachineIdentifier)
+        hook.append(Action::RemoveConfig)
+        hook.append(Action::TerminateOrchestration)
       end
 
       action_hook(:mutagen_utilizer, :machine_action_reload) do |hook|

@@ -12,8 +12,8 @@ module VagrantPlugins
         end
 
         def call(env)
-        #   o = Orchestrator.new(@machine, @console)
-        #   o.remove_ssh_config_entry
+          o = Orchestrator.new(@machine, @console)
+          o.save_machine_identifier
           @app.call(env)
         end
       end

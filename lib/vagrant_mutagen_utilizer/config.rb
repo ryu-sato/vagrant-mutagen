@@ -10,6 +10,9 @@ module VagrantPlugins
       attr_accessor :orchestrate
       attr_accessor :ssh_user_config_path
 
+      # Only use private
+      attr_accessor :machine_id
+
       def initialize
         super
 
